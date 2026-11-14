@@ -1,25 +1,26 @@
 # GhostNIC
 
-GhostNIC is a research framework that demonstrates purely passive, zero-socket
-eBPF offensive tradecraft on compromised IoT/Edge Linux gateways.  The implant
+GhostNIC is a research framework for studying passive, zero-socket eBPF
+techniques on Linux gateways — and for detecting them.  The framework
 never creates a socket, never spawns a process after initial load, and never
-generates new packets.  It observes and subtly modifies in-flight packets at
+generates new packets.  It observes and modifies in-flight packets at
 the XDP (ingress) and TC (egress) layers.
 
-This repository is intended for academic red-team research, defensive training,
-and controlled lab environments.  It is **not** a weapon for unauthorized
-networks.
+This repository is intended for academic research, defensive auditing,
+and controlled lab environments.  It includes a detector utility
+(`ghost-detect`) for identifying unauthorized XDP/TC attachments on
+Linux gateways.  It is **not** intended for unauthorized networks.
 
 ## Research significance
 
-Traditional implants rely on sockets, processes, or kernel modules to maintain
-presence and manipulate traffic.  GhostNIC explores an alternative model: the
-attacker moves the entire offensive capability into the kernel's packet
-processing path and then removes the loader.  eBPF programs persist while
-attached to network interfaces, so the implant survives even when no userspace
+Traditional network-layer attacks rely on sockets, processes, or kernel modules
+to maintain presence and manipulate traffic.  GhostNIC explores an alternative
+model: the entire capability moves into the kernel's packet processing path
+and the loader is removed.  eBPF programs persist while
+attached to network interfaces, so the programs persist even when no userspace
 process remains.
 
-The framework highlights:
+The framework demonstrates and detects:
 
 * **DNS hijacking** in XDP: forge IPv4/IPv6 DNS responses and transmit them
   with `XDP_TX`.
@@ -68,8 +69,8 @@ The framework highlights:
 
 ```bash
 # Clone the repository
-git clone https://github.com/academic-redteam/ghostnic.git
-cd ghostnic
+git clone https://github.com/naeemjr/GhostNIC.git
+cd GhostNIC
 
 # Build BPF objects and Go binaries
 make all
@@ -78,7 +79,7 @@ make all
 cp ghostnic.json.example ghostnic.json
 # edit ghostnic.json to match your lab interface and targets
 
-# Load the implant (requires root or CAP_BPF)
+# Load the framework (requires root or CAP_BPF)
 sudo ./build/ghost-load --config ghostnic.json --self-destruct
 
 # Or load without any config file
